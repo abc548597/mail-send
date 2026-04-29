@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>邮件轰炸机</title>
+
+<style>
+body{
+  background:#000;
+  color:#00ffcc;
+  font-family:monospace;
+  padding:20px;
+}
+input,textarea{
+  width:100%;
+  padding:10px;
+  margin:10px 0;
+  background:#000;
+  border:1px solid #00ffcc;
+  color:#00ffcc;
+}
+button{
+  width:100%;
+  padding:12px;
+  background:#00ffcc;
+  color:#000;
+  border:none;
+  cursor:pointer;
+  font-weight:bold;
+}
+#log{
+  margin-top:15px;
+  font-size:14px;
+}
+</style>
+
+</head>
+<body>
+
+<h2>📡 Secure Mail Sender</h2>
+
+<input type="text" id="name" placeholder="名字">
+<input type="email" id="email" placeholder="邮箱（必须填）">
+<textarea id="message" placeholder="内容"></textarea>
+
+<input type="number" id="count" value="1" min="1" max="20">
+
+<button onclick="sendMail()">开始发送</button>
+
+<div id="log"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<script>
+(function(){
+  emailjs.init("wvqxU41LtDOj_39if"); // 👉 你的 Public Key
+})();
+
+function log(msg){
+  document.getElementById("log").innerHTML += msg + "<br>";
+}
+
+function sendMail(){
+
+  let name = document.getElementById("name").value;
+  let email = document.getElementById("email").value;
+  let message = document.getElementById("message").value;
+  let count = parseInt(document.getElementById("count").value);
+
+  if(!email){
+    alert("必须填写邮箱");
+    return;
+  }
+
+  if(count > 20){
+    alert("最多20次");
+    return;
+  }
+
+  log("🚀 开始发送...");
+
+  for(let i=0;i<count;i++){
+
+    setTimeout(()=>{
+
+      emailjs.send("service_tzugn1q","template_51gdmfe",{
+        name:name,
+        email:email,
+        message:message
+      }).then(function(){
+        log("✅ 第 "+(i+1)+" 次发送成功");
+      }, function(error){
+        log("❌ 第 "+(i+1)+" 次失败");
+        console.log(error);
+      });
+
+    }, i * 3000); // 👉 每3秒一次（防风控）
+
+  }
+
+}
+</script>
+
+</body>
+</html>
